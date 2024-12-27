@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * POJO class to hold employee insurance along with employee details
+ */
 @Builder
 @Getter@Setter
 public class EmployeeInsuranceDetails {

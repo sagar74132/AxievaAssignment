@@ -30,6 +30,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         this.restTemplate = builder.build();
     }
 
+    /**
+     * Method to get employee insurance details along with employee details
+     *
+     * @param empId employee id
+     * @return EmployeeInsuranceDetails
+     * @throws GlobalException if employee not found or error fetching insurance details from external service
+     */
     @Override
     public EmployeeInsuranceDetails getInsuranceDetails(String empId) throws GlobalException {
         Employee employee = getEmployeeById(empId);
@@ -44,11 +51,26 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .build();
     }
 
+    /**
+     * Method to get employee details by employee id
+     *
+     * @param empId employee id
+     * @return Employee
+     * @throws GlobalException if employee not found
+     */
     private Employee getEmployeeById(String empId) throws GlobalException {
         return employeeRepository.findByEmpId(empId)
                 .orElseThrow(() -> new GlobalException("Employee not found with id: " + empId));
     }
 
+
+    /**
+     * Method to get insurance details from external service
+     *
+     * @param empId employee id
+     * @return InsuranceDetails
+     * @throws GlobalException if error fetching insurance details from external service
+     */
     private InsuranceDetails getInsuranceDetailsFromExternalService(String empId) throws GlobalException {
 
         String insuranceServiceUrl = appConfig.getProperty("third.party.mocked.api.url");
