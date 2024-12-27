@@ -5,7 +5,7 @@
 
 ## Important Notes
 
-* `H2` in mem database is used in the application. The test data is stored in [data.sql](src/main/resources/data.sql) and the db
+* `H2` in-mem database is used in the application. The test data is stored in [data.sql](src/main/resources/data.sql) and the db
   configs are inside `application.yaml` file
 * I'm using a third party API service [Mockaroo](https://www.mockaroo.com/), which creates a mock response
   for `insuranceDetails` POJO when called.
