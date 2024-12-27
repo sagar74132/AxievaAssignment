@@ -23,7 +23,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final RestTemplate restTemplate;
 
     @Autowired
-    private EmployeeServiceImpl(EmployeeRepository employeeRepository,
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository,
                                 AppConfig appConfig,
                                 RestTemplateBuilder builder) {
         this.employeeRepository = employeeRepository;
