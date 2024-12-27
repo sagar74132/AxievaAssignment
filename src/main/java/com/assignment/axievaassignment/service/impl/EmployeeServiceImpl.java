@@ -1,34 +1,30 @@
 package com.assignment.axievaassignment.service.impl;
 
-import com.assignment.axievaassignment.constant.Constant;
 import com.assignment.axievaassignment.entity.Employee;
 import com.assignment.axievaassignment.exceptions.GlobalException;
+import com.assignment.axievaassignment.manager.InsuranceApiManager;
 import com.assignment.axievaassignment.model.EmployeeInsuranceDetails;
 import com.assignment.axievaassignment.model.InsuranceDetails;
 import com.assignment.axievaassignment.repository.EmployeeRepository;
 import com.assignment.axievaassignment.service.EmployeeService;
 import com.assignment.axievaassignment.utils.AppConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Map;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final AppConfig appConfig;
-    private final RestTemplate restTemplate;
+    private final InsuranceApiManager insuranceApiManager;
 
     @Autowired
     public EmployeeServiceImpl(EmployeeRepository employeeRepository,
                                 AppConfig appConfig,
-                                RestTemplateBuilder builder) {
+                               InsuranceApiManager insuranceApiManager) {
         this.employeeRepository = employeeRepository;
         this.appConfig = appConfig;
-        this.restTemplate = builder.build();
+        this.insuranceApiManager = insuranceApiManager;
     }
 
     /**
@@ -40,8 +36,9 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public EmployeeInsuranceDetails getInsuranceDetails(String empId) throws GlobalException {
+
         Employee employee = getEmployeeById(empId);
-        InsuranceDetails insuranceDetails = getInsuranceDetailsFromExternalService(empId);
+        InsuranceDetails insuranceDetails = insuranceApiManager.getInsuranceDetailsFromExternalService(empId);
 
         return EmployeeInsuranceDetails.builder()
                 .empName(employee.getEmpName())
@@ -64,29 +61,5 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new GlobalException(
                         String.format("%s: %s", appConfig.getProperty("axieva.employee.not.found"), empId)
                 ));
-    }
-
-
-    /**
-     * Method to get insurance details from external service
-     *
-     * @param empId employee id
-     * @return InsuranceDetails
-     * @throws GlobalException if error fetching insurance details from external service
-     */
-    private InsuranceDetails getInsuranceDetailsFromExternalService(String empId) throws GlobalException {
-
-        String insuranceServiceUrl = appConfig.getProperty("third.party.mocked.api.url");
-
-        // Created a payload with the required param
-        Map<String, String> payload = Map.of(
-                Constant.THIRD_PARTY_URL_PARAM, empId
-        );
-
-        try {
-            return restTemplate.postForObject(insuranceServiceUrl, payload, InsuranceDetails.class);
-        } catch (Exception e) {
-            throw new GlobalException(String.format("%s: %s", appConfig.getProperty("error.fetching.insurance.details"), e));
-        }
     }
 }

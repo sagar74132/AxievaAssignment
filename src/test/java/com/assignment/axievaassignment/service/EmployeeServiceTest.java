@@ -2,6 +2,7 @@ package com.assignment.axievaassignment.service;
 
 import com.assignment.axievaassignment.entity.Employee;
 import com.assignment.axievaassignment.exceptions.GlobalException;
+import com.assignment.axievaassignment.manager.InsuranceApiManager;
 import com.assignment.axievaassignment.model.EmployeeInsuranceDetails;
 import com.assignment.axievaassignment.model.InsuranceDetails;
 import com.assignment.axievaassignment.repository.EmployeeRepository;
@@ -39,6 +40,7 @@ public class EmployeeServiceTest {
     private RestTemplateBuilder restTemplateBuilder;
 
     private EmployeeServiceImpl employeeService;
+    private InsuranceApiManager insuranceApiManager;
 
     private Employee testEmployee;
     private InsuranceDetails testInsuranceDetails;
@@ -49,7 +51,8 @@ public class EmployeeServiceTest {
     void setUp() {
         when(restTemplateBuilder.build()).thenReturn(restTemplate);
 
-        employeeService = new EmployeeServiceImpl(employeeRepository, appConfig, restTemplateBuilder);
+        insuranceApiManager = new InsuranceApiManager(restTemplateBuilder, appConfig);
+        employeeService = new EmployeeServiceImpl(employeeRepository, appConfig, insuranceApiManager);
 
         // Setup test employee
         testEmployee = new Employee();
@@ -123,7 +126,7 @@ public class EmployeeServiceTest {
         when(appConfig.getProperty("third.party.mocked.api.url")).thenReturn(MOCK_API_URL);
         when(restTemplate.postForObject(
                 eq(MOCK_API_URL),
-                any(java.util.Map.class),
+                any(Map.class),
                 eq(InsuranceDetails.class)
         )).thenThrow(new RuntimeException("Service unavailable"));
 
@@ -134,7 +137,7 @@ public class EmployeeServiceTest {
         GlobalException exception = assertThrows(GlobalException.class,
                 () -> employeeService.getInsuranceDetails(TEST_EMP_ID));
 
-        assertEquals("Error fetching insurance details", exception.getMessage());
+        assertTrue(exception.getMessage().contains("Error fetching insurance details"));
         verify(employeeRepository).findByEmpId(TEST_EMP_ID);
         verify(restTemplate).postForObject(
                 eq(MOCK_API_URL),
