@@ -1,6 +1,6 @@
 ## GOAL
 
-* A Spring-Boot project to expose a GET API to fetch the Employee's corporate details along with the his/her insurance
+* A Spring-Boot project to expose a GET API to fetch the Employee's corporate details along with his/her insurance
   details extracted from a 3rd party API on basis of `employee id`.
 
 ## Important Notes
