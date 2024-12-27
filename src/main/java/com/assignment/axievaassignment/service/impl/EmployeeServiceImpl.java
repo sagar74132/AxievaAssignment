@@ -86,7 +86,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         try {
             return restTemplate.postForObject(insuranceServiceUrl, payload, InsuranceDetails.class);
         } catch (Exception e) {
-            throw new GlobalException(appConfig.getProperty("error.fetching.insurance.details"), e);
+            throw new GlobalException(String.format("%s: %s", appConfig.getProperty("error.fetching.insurance.details"), e));
         }
     }
 }
