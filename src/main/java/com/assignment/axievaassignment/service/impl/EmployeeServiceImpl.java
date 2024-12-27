@@ -1,5 +1,6 @@
 package com.assignment.axievaassignment.service.impl;
 
+import com.assignment.axievaassignment.constant.Constant;
 import com.assignment.axievaassignment.entity.Employee;
 import com.assignment.axievaassignment.exceptions.GlobalException;
 import com.assignment.axievaassignment.model.EmployeeInsuranceDetails;
@@ -60,7 +61,9 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     private Employee getEmployeeById(String empId) throws GlobalException {
         return employeeRepository.findByEmpId(empId)
-                .orElseThrow(() -> new GlobalException("Employee not found with id: " + empId));
+                .orElseThrow(() -> new GlobalException(
+                        String.format("%s: %s", appConfig.getProperty("axieva.employee.not.found"), empId)
+                ));
     }
 
 
@@ -74,12 +77,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     private InsuranceDetails getInsuranceDetailsFromExternalService(String empId) throws GlobalException {
 
         String insuranceServiceUrl = appConfig.getProperty("third.party.mocked.api.url");
-        Map<String, String> param = Map.of("empId", empId);
+
+        // Created a payload with the required param
+        Map<String, String> payload = Map.of(
+                Constant.THIRD_PARTY_URL_PARAM, empId
+        );
 
         try {
-            return restTemplate.postForObject(insuranceServiceUrl, param, InsuranceDetails.class);
+            return restTemplate.postForObject(insuranceServiceUrl, payload, InsuranceDetails.class);
         } catch (Exception e) {
-            throw new GlobalException("Error fetching insurance details from external service", e);
+            throw new GlobalException(appConfig.getProperty("error.fetching.insurance.details"), e);
         }
     }
 }
