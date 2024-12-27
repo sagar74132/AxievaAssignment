@@ -22,7 +22,7 @@
     * Application will get started on `8080` port
 * There's no local configurations required or no-dependency is there which would block the application from running on
   different systems.
-* Covered 100% unit test cases for `EmployeeService` class.
+* Covered 100% unit test cases for business logic classes.
 
 ### A Valid Test
 
