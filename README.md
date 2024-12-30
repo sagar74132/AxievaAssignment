@@ -24,7 +24,7 @@
   different systems.
 * Covered 100% unit test cases for business logic classes.
 
-### A Valid Test
+### A Positive Test
 
 #### Payload
 
@@ -47,7 +47,7 @@ http://localhost:8080/employee/insurance?empId=PS1234
 }
 ```
 
-### An Invalid Test
+### A Negative Test
 
 #### Payload
 
